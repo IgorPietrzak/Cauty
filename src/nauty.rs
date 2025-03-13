@@ -57,11 +57,12 @@ extern "C" {
         g: *mut setword,
         lab: *mut c_int,
         ptn: *mut c_int,
-        active: *mut c_int,
+        active: *mut setword, // Changed from *mut c_int
         orbits: *mut c_int,
         options: *mut OptionBlk,
         stats: *mut StatsBlk,
-        worksize: *mut setword,
+        workspace: *mut setword, // Renamed from worksize
+        worksize: c_int,        // Added as separate arg
         m: c_int,
         n: c_int,
         canon: *mut setword,

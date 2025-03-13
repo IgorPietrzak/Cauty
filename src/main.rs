@@ -9,7 +9,7 @@ fn main() {
     let mut ptn = vec![1, 0, 0];
     let mut canon = vec![0; 3];
     let mut orbits = vec![0; 3];
-    let mut worksize = vec![0; 50]; // 50 words
+    let mut worksize = vec![0; 200];
     let mut stats = nauty::StatsBlk {
         grpsize1: 0.0,
         grpsize2: 0,
@@ -55,14 +55,15 @@ fn main() {
             g.as_mut_ptr(),        // 1
             lab.as_mut_ptr(),      // 2
             ptn.as_mut_ptr(),      // 3
-            ptr::null_mut(),       // 4
+            ptr::null_mut(),       // 4: active (NULL is fine for default)
             orbits.as_mut_ptr(),   // 5
             options_ptr,           // 6
             &mut stats,            // 7
-            worksize.as_mut_ptr(), // 8
-            3,                     // 9: m
-            1,                     // 10: n
-            canon.as_mut_ptr(),    // 11
+            worksize.as_mut_ptr(), // 8: workspace
+            200,                    // 9: worksize (size in words)
+            1,                     // 10: m (fixed from 3)
+            3,                     // 11: n (fixed from 1)
+            canon.as_mut_ptr(),    // 12
         );
 
         println!("Canonical lab: {:?}", lab);

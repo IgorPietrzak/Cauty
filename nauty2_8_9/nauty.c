@@ -272,7 +272,11 @@ nauty(graph *g_arg, int *lab, int *ptn, set *active_arg,
     else
         dispatch = *(options->dispatch);
         // nauty.c: ~line 270
-fprintf(stderr, "m=%d, n=%d\n", m_arg, n_arg);
+  fprintf(stderr, "nauty: m=%d, n=%d, worksize=%d, workspace=%p\n", m_arg, n_arg, worksize, workspace);
+if (worksize < 50 * m_arg) {
+    fprintf(stderr, "Error: worksize=%d < 50*m=%d\n", worksize, 50 * m_arg);
+    stats_arg->errstatus = 2;
+}
 
     if (options->userrefproc) 
         dispatch.refine = options->userrefproc;
@@ -496,6 +500,9 @@ fprintf(stderr, "m=%d, n=%d\n", m_arg, n_arg);
     needshortprune = FALSE;
     invarsuclevel = NAUTY_INFINITY;
     invapplics = invsuccesses = 0;
+  if (stats_arg->errstatus == 2) {
+    fprintf(stderr, "errstatus=2 set: worksize=%d, m=%d\n", worksize, m_arg);
+}
 
 #if !MAXN
     retval = firstpathnode0(lab,ptn,1,numcells,&tcnode0);

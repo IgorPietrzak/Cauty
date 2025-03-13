@@ -27,7 +27,7 @@ it is necessary to check they are correct.
 #define HAS_STDIO_UNLOCK 1  /* Whether there are getc_unlocked, */
                                /* putc_unlocked,flockfile and funlockfile */
 
-#define DEFAULT_WORDSIZE 0
+#define DEFAULT_WORDSIZE 32
 
 /* Note that thread-local storage (TLS) is only useful for running nauty
    in multiple threads and will slow it down a little otherwise. */
