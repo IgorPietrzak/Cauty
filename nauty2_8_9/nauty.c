@@ -252,6 +252,7 @@ nauty(graph *g_arg, int *lab, int *ptn, set *active_arg,
       int *orbits_arg, optionblk *options, statsblk *stats_arg,
       set *ws_arg, int worksize, int m_arg, int n_arg, graph *canong_arg)
 {
+  
     int i;
     int numcells;
     int retval;
@@ -262,8 +263,7 @@ nauty(graph *g_arg, int *lab, int *ptn, set *active_arg,
 
     /* determine dispatch vector */
     // nauty.c:265
-    fprintf(stderr, "options=%p, dispatch=%p\n", options, options->dispatch);
-    if (options->dispatch == NULL)
+        if (options->dispatch == NULL)
     {
         fprintf(ERRFILE,">E nauty: null dispatch vector\n");
         fprintf(ERRFILE,"Maybe you need to recompile\n");
@@ -271,8 +271,6 @@ nauty(graph *g_arg, int *lab, int *ptn, set *active_arg,
     }
     else
         dispatch = *(options->dispatch);
-        // nauty.c: ~line 270
-  fprintf(stderr, "nauty: m=%d, n=%d, worksize=%d, workspace=%p\n", m_arg, n_arg, worksize, workspace);
 if (worksize < 50 * m_arg) {
     fprintf(stderr, "Error: worksize=%d < 50*m=%d\n", worksize, 50 * m_arg);
     stats_arg->errstatus = 2;

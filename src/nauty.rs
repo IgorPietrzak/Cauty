@@ -13,7 +13,7 @@ pub struct OptionBlk {
     pub defaultptn: c_int,
     pub cartesian: c_int,
     pub linelength: c_int,
-    pub outfile: *mut c_void, // FILE*
+    pub outfile: *mut c_void,
     pub userrefproc: *mut c_void,
     pub userautomproc: *mut c_void,
     pub userlevelproc: *mut c_void,
@@ -25,7 +25,7 @@ pub struct OptionBlk {
     pub maxinvarlevel: c_int,
     pub invararg: c_int,
     pub dispatch: *const DispatchVec,
-    pub schreier: *mut c_int,
+    pub schreier: c_int,  // boolean in Nauty 2.8.9
     pub extra_options: *mut c_void,
 }
 
@@ -57,16 +57,15 @@ extern "C" {
         g: *mut setword,
         lab: *mut c_int,
         ptn: *mut c_int,
-        active: *mut setword, // Changed from *mut c_int
+        active: *mut setword,
         orbits: *mut c_int,
         options: *mut OptionBlk,
         stats: *mut StatsBlk,
-        workspace: *mut setword, // Renamed from worksize
-        worksize: c_int,        // Added as separate arg
+        workspace: *mut setword,
+        worksize: c_int,
         m: c_int,
         n: c_int,
         canon: *mut setword,
     );
-
     pub static dispatch_graph: DispatchVec;
 }
