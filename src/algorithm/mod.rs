@@ -1,25 +1,31 @@
+// algorithm.rs
 use crate::infection::infection_set;
 use std::os::raw::c_int;
 use crate::nauty;
 use std::collections::HashMap;
-use std::collections::HashSet;
 use crate::Graph;
 
 pub struct Algorithm {
-    pub orbit_reps: Vec<Vec<usize>>,      // All orbit representatives
-    pub current_reps: Vec<Vec<usize>>,    // Reps at current level
+    pub orbit_reps: HashMap<usize, Vec<Vec<usize>>>,
+    pub current_reps: Vec<Vec<usize>>,
     pub n: usize,
-    infection_set: Vec<Vec<usize>>,       // Colourings to process
-    pub infected: usize,                  // Current number of 1s
+    infection_set: Vec<Vec<usize>>,
+    pub infected: usize,
     pub graph: Graph,
 }
 
 impl Algorithm {
     pub fn init(graph: Graph) -> Self {
         let n = graph.n;
-        let current_reps: Vec<Vec<usize>> = vec![vec![0; n]];
-        let orbit_reps: Vec<Vec<usize>> = vec![vec![0; n]]; // Start with all-0s
-        let infection_set = infection_set(&current_reps); // Fixed typo from your original
+        let initial_rep = vec![0; n];
+        let mut orbit_reps: HashMap<usize, Vec<Vec<usize>>> = HashMap::new();
+        orbit_reps.insert(0, vec![initial_rep.clone()]);
+        
+        let flipped_initial: Vec<usize> = initial_rep.iter().map(|&x| x ^ 1).collect();
+        orbit_reps.insert(n, vec![flipped_initial]);
+
+        let current_reps: Vec<Vec<usize>> = vec![initial_rep];
+        let infection_set = infection_set(&current_reps);
         let infected = 1;
 
         Self {
@@ -36,15 +42,22 @@ impl Algorithm {
         while (self.infected as f32) <= ((self.n / 2) as f32).floor() {
             self.run_level();
         }
-        self.invert_colourings();
-        self.orbit_reps.len() // Return total number of orbits
+        let total = self.orbit_reps.values().map(|v| v.len()).sum::<usize>();
+        total
     }
 
     pub fn run_level(&mut self) {
-        println!("Level {}: {} infection candidates {:?}", 
-                 self.infected, self.infection_set.len(), self.infection_set);
         self.get_current_reps();
-        self.orbit_reps.extend(self.current_reps.clone());
+
+        for rep in self.current_reps.clone() {
+            let k = self.infected;
+            self.add_rep(rep.clone(), k);
+
+            let flipped: Vec<usize> = rep.iter().map(|&x| x ^ 1).collect();
+            let flipped_count = self.n - k;
+            self.add_rep(flipped, flipped_count);
+        }
+
         self.reset_level();
     }
 
@@ -64,29 +77,23 @@ impl Algorithm {
         }
 
         self.current_reps = canon_map.into_values().collect();
-        println!("Added {} reps at level {}: {:?}", 
-                 self.current_reps.len(), self.infected, self.current_reps);
     }
 
-    fn invert_colourings(&mut self) {
-        let mut flipped_colours: Vec<Vec<usize>> = Vec::new();
-        let mut seen_colours = HashSet::new();
+    fn add_rep(&mut self, coloring: Vec<usize>, count: usize) {
+        let colors: Vec<c_int> = coloring.iter().map(|&x| x as c_int).collect();
+        let (canon, _stats) = self.graph.run_nauty_with_coloring(&colors);
 
-        for row in self.orbit_reps.iter() {
-            seen_colours.insert(row.clone());
+        let reps = self.orbit_reps.entry(count).or_insert_with(Vec::new);
+        let is_new = !reps.iter().any(|rep| {
+            let rep_colors: Vec<c_int> = rep.iter().map(|&x| x as c_int).collect();
+            let (rep_canon, _) = self.graph.run_nauty_with_coloring(&rep_colors);
+            rep_canon == canon
+        });
+
+        if is_new {
+            reps.push(coloring);
         }
-
-        for row in self.orbit_reps.iter() {
-            let flipped_row: Vec<usize> = row.iter().map(|&value| value ^ 1).collect();
-            if !seen_colours.contains(&flipped_row) {
-                flipped_colours.push(flipped_row.clone());
-                seen_colours.insert(flipped_row);
-            }
-        }
-
-        self.orbit_reps.extend(flipped_colours);
     }
 }
-
 
 
