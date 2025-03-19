@@ -5,7 +5,7 @@ mod graph;
 
 use std::ptr;
 use std::os::raw::c_int;
-use algorithm::Algorithm;
+use algorithm::Cauty;
 use graph::Graph;
 
 fn main() {
@@ -25,7 +25,7 @@ fn main() {
     for (name, n, edges, expected) in tests.iter() {
         println!("Testing {} with n={} and edges {:?}", name, n, edges);
         let graph = Graph::new(*n, edges);
-        let mut algo = Algorithm::init(graph);
+        let mut algo = Cauty::init(graph);
         let orbit_count = algo.run();
         println!("Computed orbits: {}, Expected: {}, {}", orbit_count, expected, 
                  if orbit_count == *expected { "PASS" } else { "FAIL" });
