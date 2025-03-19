@@ -1,6 +1,6 @@
 use std::os::raw::{c_int, c_void};
 
-pub type setword = u32;
+pub type setword = u64;
 pub type graph = setword;
 pub type permutation = c_int;
 

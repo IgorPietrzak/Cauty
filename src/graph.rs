@@ -3,12 +3,12 @@ use std::os::raw::c_int;
 use crate::nauty;
 
 pub struct Graph {
-   pub adj: Vec<Vec<usize>>,
-   pub n: usize,
+    pub adj: Vec<Vec<usize>>,
+    pub n: usize,
 }
 
 impl Graph {
-   pub fn new(n: usize, edges: &[(usize, usize)]) -> Self {
+    pub fn new(n: usize, edges: &[(usize, usize)]) -> Self {
         let mut adj = vec![vec![]; n];
         for &(u, v) in edges {
             adj[u].push(v);
@@ -19,13 +19,15 @@ impl Graph {
 
     pub fn to_nauty_dense(&self) -> (Vec<nauty::setword>, c_int, c_int) {
         let n = self.n as c_int;
-        let m = ((self.n + 31) / 32) as c_int; // 32-bit setwords
-        let mut g = vec![0; (m * n) as usize];
+        let m = ((self.n + 63) / 64) as c_int; // 64-bit setwords
+        let mut g = vec![0u64; (m * n) as usize]; // Explicit u64 for clarity
 
-        // MSB-first: bit 31 = vertex 0, bit 30 = vertex 1, etc.
+        // MSB-first: bit 63 = vertex 0, bit 62 = vertex 1, etc., across m words
         for u in 0..self.n {
             for &v in &self.adj[u] {
-                g[u] |= 1u32 << (31 - v);
+                let word_idx = v / 64; // Which 64-bit word
+                let bit_idx = 63 - (v % 64); // Bit within word
+                g[(u * m as usize) + word_idx] |= 1u64 << bit_idx;
             }
         }
         (g, m, n)
@@ -49,9 +51,9 @@ impl Graph {
         }
         ptn[self.n - 1] = 0; // Last element always 0
 
-        let mut canon = vec![0; (m * n) as usize];
+        let mut canon = vec![0u64; (m * n) as usize];
         let mut orbits = vec![0; self.n];
-        let mut worksize = vec![0; 2000];
+        let mut worksize = vec![0u64; 200 * m as usize]; // 200 setwords per m, u64
         let mut stats = nauty::StatsBlk {
             grpsize1: 0.0,
             grpsize2: 0,
@@ -92,7 +94,7 @@ impl Graph {
                 &mut options,
                 &mut stats,
                 worksize.as_mut_ptr(),
-                2000,
+                (200 * m) as c_int, // 200 setwords per m
                 m,
                 n,
                 canon.as_mut_ptr(),

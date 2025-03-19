@@ -35,7 +35,7 @@ def run_test(graph, rust_executable):
 def main():
     rust_executable = "./target/release/nauty-colourings"
     test_cases = [("Cycle", n, "cycle") for n in [4,5,7,10,12]] + \
-                 [("Star", n, "star") for n in [10, 20,25,32]]
+                 [("Star", n, "star") for n in [10, 20,25,32,100]]
     
     # test_cases = [("Star", n, "star") for n in [10, 20,25,32]]
     results = []
