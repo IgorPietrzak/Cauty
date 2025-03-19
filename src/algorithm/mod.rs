@@ -27,7 +27,7 @@ impl Cauty {
         let mut seen_canons: HashMap<usize, Vec<Vec<nauty::setword>>> = HashMap::new();
         seen_canons.insert(0, vec![canon_init]);
         seen_canons.insert(n, vec![canon_flip]);
-        let orbit_count = 2; // [0,0,...,0] and [1,1,...,1]
+        let orbit_count = 2; 
 
         let current_reps: Vec<Vec<usize>> = vec![initial_rep];
         let infection_set = infection_set(&current_reps);

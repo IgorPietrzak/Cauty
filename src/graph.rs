@@ -51,7 +51,7 @@ impl Graph {
 
         let mut canon = vec![0; (m * n) as usize];
         let mut orbits = vec![0; self.n];
-        let mut worksize = vec![0; 200];
+        let mut worksize = vec![0; 2000];
         let mut stats = nauty::StatsBlk {
             grpsize1: 0.0,
             grpsize2: 0,
@@ -92,7 +92,7 @@ impl Graph {
                 &mut options,
                 &mut stats,
                 worksize.as_mut_ptr(),
-                200,
+                2000,
                 m,
                 n,
                 canon.as_mut_ptr(),
