@@ -99,3 +99,43 @@ impl Cauty {
 }
 
 
+
+#[cfg(test)]
+mod tests {
+    use super::Graph;
+    use std::os::raw::c_int;
+
+    #[test]
+    fn test_colourings_chemistry() {
+        // Define the 2,3-dichlorobutane graph (8 vertices, 7 edges)
+        let vertices = 8;
+        let edges = vec![
+            (0, 1), // C1-C2
+            (1, 2), // C2-C3
+            (2, 3), // C3-C4
+            (1, 4), // C2-Cl1
+            (2, 5), // C3-Cl2
+            (1, 6), // C2-H1
+            (2, 7), // C3-H2
+        ];
+        let graph = Graph::new(vertices, &edges);
+
+        // Define the four colourings for vertices 4 and 5 (Cl1, Cl2)
+        let colourings: Vec<Vec<c_int>> = vec![
+            vec![0, 0, 0, 0, 0, 0, 0, 0], // (4, 5) = (0, 0) -> (R,R)
+            vec![0, 0, 0, 0, 1, 1, 0, 0], // (4, 5) = (1, 1) -> (S,S)
+            vec![0, 0, 0, 0, 0, 1, 0, 0], // (4, 5) = (0, 1) -> Meso (R,S)
+            vec![0, 0, 0, 0, 1, 0, 0, 0], // (4, 5) = (1, 0) -> Meso (S,R)
+        ];
+
+        // Run nauty for each colouring and collect canonical forms
+        let mut canonical_forms = Vec::new();
+        for coloring in &colourings {
+            let (canon, _stats) = graph.run_nauty_with_coloring(coloring);
+            canonical_forms.push((canon, coloring[4], coloring[5]));
+        }
+
+        println!("{:?}", canonical_forms);
+
+    }
+}

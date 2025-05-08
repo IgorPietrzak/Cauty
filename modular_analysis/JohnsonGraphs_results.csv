@@ -1,0 +1,5 @@
+name,vertices,edges,orbits,runtime_ms
+Johnson_4_2,6,12,10,0.1
+Johnson_5_2,10,30,34,1.0
+Johnson_6_2,15,60,156,11.0
+Johnson_7_2,21,105,1044,105.0

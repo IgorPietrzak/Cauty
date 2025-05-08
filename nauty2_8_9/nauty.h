@@ -125,7 +125,7 @@ it is necessary to check they are correct.
 #define SYS_UNIX
 #endif
 
-#define IS_ARM64 1
+#define IS_ARM64 0
 
 /*****************************************************************************
 *                                                                            *

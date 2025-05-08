@@ -4,7 +4,7 @@ RELEASE=2.8.9
 
 SHELL=/bin/sh
 CC=gcc
-CFLAGS= -O4  -march=native
+CFLAGS= -O4  -mpopcnt -march=native
 LDFLAGS= 
 TESTPROGS=dreadtest dreadtestS dreadtestS1 dreadtest4K dreadtest1 dreadtestW dreadtestW1 dreadtestL dreadtestL1 dreadtestQ dreadtestQ1
 NAUTESTS=nautest nautestS nautestW nautestL nautestQ

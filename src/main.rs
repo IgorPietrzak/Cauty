@@ -23,7 +23,7 @@ struct ResultOutput {
     name: String,
     vertices: usize,
     orbits: usize,
-    runtime_ms: u128,
+    runtime_ms: f64,
 }
 
 fn main() {
@@ -43,7 +43,8 @@ fn main() {
     let mut algo = Cauty::init(graph);
     let start = Instant::now();
     let orbit_count = algo.run();
-    let duration = start.elapsed().as_millis();
+    let duration = start.elapsed().as_nanos() as f64 / 1_000_000.0;
+
 
     let result = ResultOutput {
         name: graph_input.name,

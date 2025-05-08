@@ -1,0 +1,9 @@
+{
+    "name": "star_graph",
+    "vertices": 4,
+    "edges": [
+        [0, 2],
+        [1, 2],
+        [3, 2]
+    ]
+}
