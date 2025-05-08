@@ -14,13 +14,13 @@ of `G` such that `g.A = B`. The algorithm collects 1 element from each orbit. Th
 
 ## Technical Overview
 
-The Nauty package available at [https://pallini.di.uniroma1.it/](https://pallini.di.uniroma1.it/) is written in C. Cauty is written in Rust using foreign function interfaces (FFI) to embed the Nauty C code. An example build for an ARM 64-bit system is included but Nauty will need to be recompiled for other CPU architectures. To setup Nauty to work with Cauty run:
+The Nauty package available at [https://pallini.di.uniroma1.it/](https://pallini.di.uniroma1.it/) is written in C. Cauty is written in Rust using foreign function interfaces (FFI) to embed the Nauty C code. An example build for an x86_64 system is included but Nauty will need to be recompiled for other CPU architectures. To setup Nauty to work with Cauty run:
 
 ```bash
 cd nauty2_8_9
 make clean
-./configure --enable-wordsize=32
-make CFLAGS="-fPIC -g -Wall"
+./configure --enable-wordsize=64
+make CFLAGS="-g -Wall"
 ar rcs libnauty.a nauty.o nautil.o naugraph.o naurng.o schreier.o naututil.o
 ```
 
